@@ -1,0 +1,15 @@
+# Never publish student data, secrets, or the data-bearing workflows
+*.env
+*.key
+*Open AI Apis*
+CIS515_Data_Loader.json
+CIS515_Summary_PDF.json
+*_Tracker.xlsx
+*_Summary.docx
+*.csv
+data/
+raw/
+output/
+Students*Workflow*/
+CIS515_Workflow_Screenshots/
+*.mp4

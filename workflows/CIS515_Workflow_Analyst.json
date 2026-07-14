@@ -1,0 +1,275 @@
+{
+  "name": "CIS 515 — Workflow Analyst",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi! I am the CIS 515 Workflow Analyst. Ask me about Assignment 1 & 2 builds, the Week-1 Yellowdig show-and-tells, common patterns, standouts, week-over-week evolution, any student, or submission status.",
+        "options": {
+          "inputPlaceholder": "e.g. How did builds evolve from A1 to A2?",
+          "subtitle": "Reads the class workflow Google Sheet and answers analytical questions.",
+          "title": "CIS 515 Workflow Analyst"
+        }
+      },
+      "id": "5852b517-f650-46be-a3e6-22f6ba54c81f",
+      "name": "Ask the Analyst",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the CIS 515 Workflow Analyst, a navigator over the class n8n workflow data for the course instructor. You answer questions about Assignment 1 and Assignment 2 builds, the Week-1 Yellowdig show-and-tell posts, common/unique/impactful/complex patterns, week-over-week evolution, per-student lookups, and submission status.\n\nThe data lives in a Google Sheet, each tab exposed as a tool:\n- Read A1 Assignments: one row per Assignment 1 workflow (Student, Workflow Title, What it does, Pattern, Complexity 1-5, Nodes, Tools, Inputs, Outputs, Source).\n- Read A2 Assignments: same columns for Assignment 2.\n- Read Show-and-Tell W1: Week-1 Yellowdig posts (Student, Week, Workflow, Description, Titled Show-and-Tell).\n- Read Submission Status: per student, whether they submitted A1 and A2.\nUse the Calculator for counting and arithmetic.\n\nRules: read the relevant tab(s) before answering; cite student names and the assignment or week; never invent students, titles, patterns, or numbers - if it is not in the data, say so. Week 2 and Week 3 show-and-tell data are not loaded yet, so say so if asked. Be concise and useful for a professor giving class-wide feedback.\n\nDownloadable PDF: if someone wants a PDF summary, point them to the Summary PDF form at https://YOUR_N8N_HOST/webhook/cis515-summary-form where they can pick Assignment 1, Assignment 2, All assignments, or Show-and-Tell. Direct download links also work: https://YOUR_N8N_HOST/webhook/cis515-summary?type=A1 (or type=A2, ALL, or ST). These require the 'CIS 515 - Summary PDF' workflow to be active.",
+          "maxIterations": 10
+        }
+      },
+      "id": "bd9c5ed7-bdb1-4a57-b1e6-32b9cd9c0c5b",
+      "name": "CIS 515 Analyst",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "9be55a85-7af0-43e4-ab6b-64cdaeeec18d",
+      "name": "OpenAI gpt-5-mini",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 8
+      },
+      "id": "8acb71ce-04b6-427c-9475-0cabb77d58b8",
+      "name": "Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        400,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "A1_Assignments"
+        },
+        "options": {}
+      },
+      "id": "a9c8ac40-1ba5-49b0-900b-415ab3f2998e",
+      "name": "Read A1 Assignments",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        528,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "A2_Assignments"
+        },
+        "options": {}
+      },
+      "id": "f32995ac-79da-484b-bb0f-d542611927e9",
+      "name": "Read A2 Assignments",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "ShowAndTell_W1"
+        },
+        "options": {}
+      },
+      "id": "25a769d2-b3af-435d-91e1-3ecdc3de6164",
+      "name": "Read Show-and-Tell W1",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        768,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Submission_Status"
+        },
+        "options": {}
+      },
+      "id": "84432e87-fb41-43ba-bf36-bd6f58f30126",
+      "name": "Read Submission Status",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        928,
+        272
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "516d977f-721f-4643-b107-5879675f4f8e",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        272
+      ]
+    }
+  ],
+  "connections": {
+    "Ask the Analyst": {
+      "main": [
+        [
+          {
+            "node": "CIS 515 Analyst",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI gpt-5-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "CIS 515 Analyst",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "CIS 515 Analyst",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read A1 Assignments": {
+      "ai_tool": [
+        [
+          {
+            "node": "CIS 515 Analyst",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read A2 Assignments": {
+      "ai_tool": [
+        [
+          {
+            "node": "CIS 515 Analyst",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Show-and-Tell W1": {
+      "ai_tool": [
+        [
+          {
+            "node": "CIS 515 Analyst",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Submission Status": {
+      "ai_tool": [
+        [
+          {
+            "node": "CIS 515 Analyst",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "CIS 515 Analyst",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "pinData": {},
+  "meta": {},
+  "active": false,
+  "tags": []
+}
